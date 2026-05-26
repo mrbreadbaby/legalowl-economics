@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex" />
+<meta name="googlebot" content="noindex, nofollow, noarchive" />
+<meta name="referrer" content="no-referrer" />
+<meta name="description" content="Pricing model, per-customer unit economics, and 36-month cash flow trajectory for LegalOwl." />
+<title>LegalOwl pricing &amp; unit economics — 2026-05-26</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #faf8f3;
+    --paper: #ffffff;
+    --ink: #1a1a1a;
+    --muted: #5b5b5b;
+    --line: #e6e2d8;
+    --line-strong: #c9c2b1;
+    --owl: #6b4f1d;
+    --owl-2: #8a6a2e;
+    --accent: #b8821a;
+
+    --live: #1f7a3a;
+    --info: #2c5d7e;
+    --info-bg: #e3eef6;
+    --info-line: #b9d2e3;
+
+    --rec-bg: #fbf2dd;
+    --rec-line: #d9b765;
+
+    /* chart palette */
+    --c-anthropic: #534AB7;
+    --c-voice:     #1D9E75;
+    --c-cloud:     #378ADD;
+    --c-compliance:#BA7517;
+    --c-insurance: #D85A30;
+    --c-ethics:    #D4537E;
+    --c-founder:   #888780;
+
+    --grid: rgba(0,0,0,0.06);
+    --axis: #6f6f6f;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #15140f;
+      --paper: #1f1e1a;
+      --ink: #ece8df;
+      --muted: #a39e92;
+      --line: #2c2a25;
+      --line-strong: #3d3a33;
+      --owl: #d4a44f;
+      --owl-2: #c89342;
+      --accent: #e0b34a;
+
+      --live: #4ec379;
+      --info: #79b1d0;
+      --info-bg: #1d2a35;
+      --info-line: #2f4a5e;
+
+      --rec-bg: #2a2418;
+      --rec-line: #8f6f25;
+
+      --grid: rgba(255,255,255,0.06);
+      --axis: #9a958a;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 40px 24px 64px; }
+
+  /* Header */
+  .hero {
+    border-bottom: 1px solid var(--line-strong);
+    padding-bottom: 22px;
+    margin-bottom: 32px;
+  }
+  .eyebrow {
+    color: var(--owl);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  h1 {
+    font-size: 32px;
+    line-height: 1.15;
+    margin: 0 0 6px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 15px;
+    margin: 6px 0 0;
+  }
+
+  section { margin-bottom: 44px; }
+  h2 {
+    font-size: 20px;
+    margin: 0 0 6px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .section-hint {
+    color: var(--muted);
+    font-size: 13.5px;
+    margin: 0 0 18px;
+  }
+  h3 { font-size: 16px; margin: 0; font-weight: 700; }
+
+  /* Top metric cards */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .metric {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 14px;
+  }
+  .metric .label {
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .metric .value {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .metric .sub {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  @media (max-width: 620px) {
+    .metrics { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* Pricing tiers */
+  .tiers {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .tier {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 16px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+  .tier.recommended {
+    border: 1px solid var(--rec-line);
+    background: var(--rec-bg);
+  }
+  .tier-flag {
+    position: absolute;
+    top: -9px;
+    left: 14px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 99px;
+  }
+  .tier-name {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .tier-price {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    line-height: 1.1;
+  }
+  .tier-price .unit {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .tier-rule { color: var(--muted); font-size: 12.5px; margin-top: 10px; }
+  .tier ul {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0 0;
+    font-size: 13px;
+  }
+  .tier li {
+    padding: 4px 0;
+    color: var(--ink);
+  }
+  .tier li::before {
+    content: "·";
+    color: var(--owl);
+    font-weight: 700;
+    margin-right: 6px;
+  }
+  @media (max-width: 620px) {
+    .tiers { grid-template-columns: 1fr; }
+  }
+
+  /* Chart card */
+  .chart-card {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 18px 16px 14px;
+  }
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    margin: 0 0 14px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+  .sw {
+    width: 11px; height: 11px;
+    border-radius: 3px;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  .chart-box {
+    position: relative;
+    height: 320px;
+  }
+
+  /* Callout */
+  .callout {
+    background: var(--info-bg);
+    border: 1px solid var(--info-line);
+    border-left: 4px solid var(--info);
+    border-radius: 10px;
+    padding: 16px 18px;
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .callout strong { color: var(--info); }
+
+  footer {
+    margin-top: 56px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="eyebrow">LegalOwl · Economics</div>
+    <h1>LegalOwl pricing &amp; unit economics</h1>
+    <p class="subtitle">Updated 2026-05-26</p>
+  </header>
+
+  <!-- Top metrics -->
+  <section>
+    <h2>Headline</h2>
+    <p class="section-hint">The shape of the business in four numbers.</p>
+    <div class="metrics">
+      <div class="metric">
+        <div class="label">Break-even at</div>
+        <div class="value">30–50</div>
+        <div class="sub">paying firms</div>
+      </div>
+      <div class="metric">
+        <div class="label">Months to BE</div>
+        <div class="value">12–18</div>
+        <div class="sub">from 1st paying</div>
+      </div>
+      <div class="metric">
+        <div class="label">Year 3 ARR</div>
+        <div class="value">$1.2M</div>
+        <div class="sub">at 80 firms avg</div>
+      </div>
+      <div class="metric">
+        <div class="label">Up-front capital</div>
+        <div class="value">$100K</div>
+        <div class="sub">to clear gate</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section>
+    <h2>Pricing tiers</h2>
+    <p class="section-hint">Per user, per month. Annual contracts standard; month-to-month +20%.</p>
+    <div class="tiers">
+      <div class="tier">
+        <div class="tier-name">Solo</div>
+        <div class="tier-price">$199<span class="unit"> /user/mo</span></div>
+        <div class="tier-rule">Solo practitioner</div>
+        <ul>
+          <li>Basic case management</li>
+          <li>200K AI tokens / mo</li>
+          <li>30 voice minutes / mo</li>
+          <li>Single matter at a time</li>
+        </ul>
+      </div>
+      <div class="tier recommended">
+        <div class="tier-flag">Recommended</div>
+        <div class="tier-name">Standard</div>
+        <div class="tier-price">$399<span class="unit"> /user/mo</span></div>
+        <div class="tier-rule">1–5 lawyer firm</div>
+        <ul>
+          <li>Full case management</li>
+          <li>1M AI tokens / mo</li>
+          <li>200 voice minutes / mo</li>
+          <li>E-sign + dashboards</li>
+        </ul>
+      </div>
+      <div class="tier">
+        <div class="tier-name">Premium</div>
+        <div class="tier-price">$699<span class="unit"> /user/mo</span></div>
+        <div class="tier-rule">5–15 lawyer firm</div>
+        <ul>
+          <li>Unlimited AI fair-use</li>
+          <li>500 voice minutes / mo</li>
+          <li>Multi-matter discovery</li>
+          <li>Advanced briefs</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stacked bar: cost per customer by phase -->
+  <section>
+    <h2>Cost per customer, by phase</h2>
+    <p class="section-hint">Monthly cost to serve one customer firm. Year 1 is heavy on compliance build and founder time; the curve compresses fast as fixed costs amortize.</p>
+    <div class="chart-card">
+      <div class="legend" id="legend-stack"></div>
+      <div class="chart-box"><canvas id="chartStack"></canvas></div>
+    </div>
+  </section>
+
+  <!-- Cash flow trajectory -->
+  <section>
+    <h2>36-month cash flow trajectory</h2>
+    <p class="section-hint">Cumulative revenue catches cumulative cost between months 14 and 18, after the up-front $100K and the slow first-year ramp. Customer count on the right axis.</p>
+    <div class="chart-card">
+      <div class="legend" id="legend-line"></div>
+      <div class="chart-box"><canvas id="chartLine"></canvas></div>
+    </div>
+  </section>
+
+  <!-- Strategic read -->
+  <section>
+    <h2>Strategic read</h2>
+    <div class="callout">
+      <strong>Vertical SaaS with compliance moat.</strong>
+      Not quick break-even, not frontier-model subsidy. $100K up-front clears the 12-to-18-month valley.
+      Compliance investment is the defensible moat that justifies $399 per user pricing vs. $89 Spellbook tier.
+    </div>
+  </section>
+
+  <footer>Not publicly indexed. Share by URL only.</footer>
+</div>
+
+<script>
+(function() {
+  const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+  const palette = {
+    anthropic: css('--c-anthropic'),
+    voice:     css('--c-voice'),
+    cloud:     css('--c-cloud'),
+    compliance:css('--c-compliance'),
+    insurance: css('--c-insurance'),
+    ethics:    css('--c-ethics'),
+    founder:   css('--c-founder'),
+  };
+  const axisColor = css('--axis');
+  const gridColor = css('--grid');
+  const inkColor  = css('--ink');
+
+  // --- Stacked bar legend (custom HTML) ---
+  const stackSeries = [
+    { key:'anthropic',  label:'Anthropic API',     color: palette.anthropic,  data:[48, 48, 48] },
+    { key:'voice',      label:'Voice + SMS',       color: palette.voice,      data:[30, 30, 30] },
+    { key:'cloud',      label:'Cloud infra',       color: palette.cloud,      data:[18, 10,  6] },
+    { key:'compliance', label:'Compliance (SOC 2)',color: palette.compliance, data:[92, 38, 10] },
+    { key:'insurance',  label:'Insurance + IR',    color: palette.insurance,  data:[110,45, 13] },
+    { key:'ethics',     label:'Ethics counsel',    color: palette.ethics,     data:[100,20, 10] },
+    { key:'founder',    label:'Founder time',      color: palette.founder,    data:[275,100,35] },
+  ];
+
+  const stackLegendEl = document.getElementById('legend-stack');
+  stackLegendEl.innerHTML = stackSeries.map(s =>
+    `<span class="legend-item"><span class="sw" style="background:${s.color}"></span>${s.label}</span>`
+  ).join('');
+
+  const phaseLabels = ['Year 1', 'Year 2–3', 'Mature'];
+
+  // Chart.js global font color
+  Chart.defaults.color = axisColor;
+  Chart.defaults.font.family = 'ui-sans-serif, system-ui, -apple-system, sans-serif';
+
+  // Build stacked bar
+  const stackCtx = document.getElementById('chartStack').getContext('2d');
+  new Chart(stackCtx, {
+    type: 'bar',
+    data: {
+      labels: phaseLabels,
+      datasets: stackSeries.map(s => ({
+        label: s.label,
+        data: s.data,
+        backgroundColor: s.color,
+        borderWidth: 0,
+        stack: 'cost'
+      }))
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => `${ctx.dataset.label}: $${ctx.parsed.y}`,
+            footer: (items) => {
+              const total = items.reduce((sum, i) => sum + i.parsed.y, 0);
+              return `Total: $${total}/mo`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { color: axisColor, font: { size: 13, weight: '600' } }
+        },
+        y: {
+          stacked: true,
+          beginAtZero: true,
+          grid: { color: gridColor, drawBorder: false },
+          ticks: {
+            color: axisColor,
+            callback: (v) => '$' + v
+          },
+          title: { display: true, text: 'USD per customer per month', color: axisColor, font: { size: 12 } }
+        }
+      }
+    }
+  });
+
+  // --- Cash flow trajectory ---
+  // Customer-count growth model (cumulative; computed per spec)
+  function customerCount(month) {
+    if (month <= 3) return 0;
+    if (month <= 8) return Math.round((month - 3) * 1.2 * 10) / 10;          // → ~6 at m8
+    if (month <= 14) return Math.round((6 + (month - 8) * 2.5) * 10) / 10;    // → 21 at m14
+    if (month <= 23) return Math.round((21 + (month - 14) * 3.5) * 10) / 10;  // → 52.5 ≈ 53 at m23
+    return Math.round((53 + (month - 23) * 3) * 10) / 10;                     // → 92 at m36
+  }
+
+  function marginalCost(month) {
+    if (month <= 12) return 400;
+    if (month <= 24) return 200;
+    return 130;
+  }
+
+  const months = Array.from({length: 37}, (_, i) => i); // 0..36
+  const customers = months.map(customerCount);
+  const REVENUE_PER_CUSTOMER = 1200;
+  const FIXED_MONTHLY = 5000;
+  const INITIAL_COST = 100000;
+
+  const cumRevenue = [];
+  const cumCost = [];
+  let revAcc = 0;
+  let costAcc = INITIAL_COST;
+  months.forEach(m => {
+    const c = customers[m];
+    const monthRev = c * REVENUE_PER_CUSTOMER;
+    const monthMarginal = c * marginalCost(m);
+    const monthCost = monthMarginal + FIXED_MONTHLY;
+    revAcc += monthRev;
+    costAcc += monthCost;
+    cumRevenue.push(Math.round(revAcc));
+    cumCost.push(Math.round(costAcc));
+  });
+
+  // Build legend
+  const lineSeries = [
+    { label:'Cumulative revenue', color: palette.voice,     style:'solid'  },
+    { label:'Cumulative cost',    color: palette.insurance, style:'solid'  },
+    { label:'Customer count',     color: palette.anthropic, style:'dashed' },
+  ];
+  document.getElementById('legend-line').innerHTML = lineSeries.map(s => {
+    return `<span class="legend-item"><span class="sw" style="background:${s.color}; ${s.style==='dashed' ? 'background:repeating-linear-gradient(90deg,'+s.color+' 0 4px,transparent 4px 7px);border-radius:1px;height:3px;width:14px;' : ''}"></span>${s.label}</span>`;
+  }).join('');
+
+  function hexToRgba(hex, alpha) {
+    const h = hex.replace('#','');
+    const r = parseInt(h.substring(0,2),16);
+    const g = parseInt(h.substring(2,4),16);
+    const b = parseInt(h.substring(4,6),16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  const lineCtx = document.getElementById('chartLine').getContext('2d');
+  new Chart(lineCtx, {
+    type: 'line',
+    data: {
+      labels: months,
+      datasets: [
+        {
+          label: 'Cumulative revenue',
+          data: cumRevenue,
+          borderColor: palette.voice,
+          backgroundColor: hexToRgba(palette.voice, 0.10),
+          fill: true,
+          tension: 0.25,
+          borderWidth: 2,
+          pointRadius: 0,
+          yAxisID: 'yMoney'
+        },
+        {
+          label: 'Cumulative cost',
+          data: cumCost,
+          borderColor: palette.insurance,
+          backgroundColor: hexToRgba(palette.insurance, 0.10),
+          fill: true,
+          tension: 0.25,
+          borderWidth: 2,
+          pointRadius: 0,
+          yAxisID: 'yMoney'
+        },
+        {
+          label: 'Customer count',
+          data: customers,
+          borderColor: palette.anthropic,
+          borderDash: [6, 4],
+          borderWidth: 2,
+          pointRadius: 0,
+          fill: false,
+          tension: 0.1,
+          yAxisID: 'yCount'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            title: (items) => `Month ${items[0].label}`,
+            label: (ctx) => {
+              const v = ctx.parsed.y;
+              if (ctx.dataset.label === 'Customer count') {
+                return `${ctx.dataset.label}: ${Math.round(v)}`;
+              }
+              return `${ctx.dataset.label}: $${v.toLocaleString()}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: {
+            color: axisColor,
+            callback: (v, i) => (i % 6 === 0 ? 'M' + i : '')
+          },
+          title: { display: true, text: 'Months from first paying customer', color: axisColor, font: { size: 12 } }
+        },
+        yMoney: {
+          position: 'left',
+          beginAtZero: true,
+          grid: { color: gridColor, drawBorder: false },
+          ticks: {
+            color: axisColor,
+            callback: (v) => '$' + (v >= 1000 ? (v/1000).toFixed(0) + 'K' : v)
+          },
+          title: { display: true, text: 'USD cumulative', color: axisColor, font: { size: 12 } }
+        },
+        yCount: {
+          position: 'right',
+          beginAtZero: true,
+          grid: { display: false },
+          ticks: { color: axisColor },
+          title: { display: true, text: 'Customers', color: axisColor, font: { size: 12 } }
+        }
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>
